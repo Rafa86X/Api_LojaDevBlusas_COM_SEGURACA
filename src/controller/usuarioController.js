@@ -1,21 +1,21 @@
 import usuario from "../models/Usuario.js";
 import { hash } from "bcrypt";
 import userExist from "../service/userExists.js";
-import pkg from 'jsonwebtoken';
-const { verify, decode } = pkg;
+import { AutenticadorPorEndpoit } from "../service/AutenticatorToEndPoit.js";
+
 
 class UsuarioController {
+
+   static gettable = () =>{ return "usuarios"}
 
    static findAll = async (req, res) =>{
         
         try {
 
-            const token = req.headers.authorization
-            const [, acssesToken] = token.split(" ")
+            const metodType = "l";
+            const token = req.headers.authorization          
             
-            const { perfil } = decode(acssesToken)
-
-            if(perfil != "gerente"){
+            if( await AutenticadorPorEndpoit(token, this.gettable(), metodType) == false){
                 throw new Error("O usuario não tem perissão para realizar a ação")
             }
 

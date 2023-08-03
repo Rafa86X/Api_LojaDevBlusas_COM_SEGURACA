@@ -31,6 +31,14 @@ class UsuarioController {
    static createUser = async (req, res) =>{
         
     try {
+
+        const metodType = "e";
+        const token = req.headers.authorization          
+        
+        if( await AutenticadorPorEndpoit(token, this.gettable(), metodType) == false){
+            throw new Error("O usuario não tem perissão para realizar a ação")
+        }
+
         let reqUser = new usuario(req.body);
 
         const { email, password } = reqUser

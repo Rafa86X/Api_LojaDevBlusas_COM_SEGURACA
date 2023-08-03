@@ -1,6 +1,8 @@
 import usuario from "../models/Usuario.js";
 import { hash } from "bcrypt";
 import userExist from "../service/userExists.js";
+import pkg from 'jsonwebtoken';
+const { verify, decode } = pkg;
 
 class UsuarioController {
 
@@ -8,11 +10,20 @@ class UsuarioController {
         
         try {
 
+            const token = req.headers.authorization
+            const [, acssesToken] = token.split(" ")
+            
+            const { perfil } = decode(acssesToken)
+
+            if(perfil != "gerente"){
+                throw new Error("O usuario não tem perissão para realizar a ação")
+            }
+
             const result = (await usuario.find())
             res.status(200).json(result);
             
         } catch (error) {
-            res.status(500).json({ message: `${error.message} - Erro na busca.`});
+            res.status(400).json({ message: `${error.message} - Erro na busca.`});
         }
     }
 

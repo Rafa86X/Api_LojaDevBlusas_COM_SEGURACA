@@ -9,8 +9,6 @@ export async function autenticater(req, res, next) {
             try{
                 const token = req.headers.authorization
             
-                console.log(token);
-            
                 if(!token){
                     throw new Error()
                 }
@@ -19,10 +17,13 @@ export async function autenticater(req, res, next) {
                 const [, acssesToken] = token.split(" ")
 
                 verify(acssesToken,process.env.SEGREDO_TOKEN)
+
                 const { id, email } = decode(acssesToken)
 
                 req.usuarioId = id
                 req.usuarioEmail = email
+
+              
 
                 return next()
             }
